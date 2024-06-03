@@ -27,14 +27,6 @@ resource "aws_instance" "blog" {
   tags = {
     Name = "HelloWorld"
   }
-}
-
-resource "aws_security_group" "blog" {
-  name        = "blog"
-  description = "Allow http and https in. Allow everything out."
-
-  vpc_id = data.aws_vpc.default.id
-}
 
 module "blog_secgrp" {
   source  = "terraform-aws-modules/security-group/aws"
@@ -50,6 +42,12 @@ module "blog_secgrp" {
   egress_cidr_blocks  = ["0.0.0.0/0"]
 }
 
+resource "aws_security_group" "blog" {
+  name        = "blog"
+  description = "Allow http and https in. Allow everything out."
+
+  vpc_id = data.aws_vpc.default.id
+}
 resource "aws_security_group_rule" "blog_http_in" {
   type        = "ingress"
   from_port   = 80
