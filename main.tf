@@ -10,7 +10,7 @@ data "aws_ami" "app_ami" {
   }
   filter {
     name = "virtualization-type"
-    values = [hvm]
+    values = ["hvm"]
   }
   owners = ["979382823631"] #bitnami  
 }
@@ -67,7 +67,7 @@ module "blog_alb" {
 
   vpc_id             = module.blog_vpc.vpc_id
   subnets            = module.blog_vpc.public_subnets
-  security_groups    = [module.blog_secgrp.security_group_id]
+  security_groups    = [module.blog_sg.security_group_id]
  
   access_logs = {
     bucket = "my-alb-logs"
