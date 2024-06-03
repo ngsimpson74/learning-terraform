@@ -14,7 +14,7 @@ data "aws_ami" "app_ami" {
   owners = ["979382823631"] # Bitnami
 }
 
-data "aws_vpc" "default {
+data "aws_vpc" "default" {
   default = true
 }
 
@@ -23,7 +23,7 @@ resource "aws_instance" "blog" {
   instance_type = var.instance_type
 
   vpc_security_group_ids = [aws.security_group.blog.id]
-  
+
   tags = {
     Name = "HelloWorld"
   }
