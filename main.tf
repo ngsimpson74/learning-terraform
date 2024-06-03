@@ -2,6 +2,16 @@ data "aws_vpc" "default" {
   default = true
 }
 
+resource "aws_instance" "blog" {
+  ami             = data.aws_ami.app_ami.id
+  instance_type   = var.instance_type
+
+  vpc_security_group_ids = [aws_security_group.blog.id]
+
+  tags = {
+    Name = "Learning Terraform"
+  }
+}
 module "blog_vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
@@ -28,7 +38,7 @@ module "autoscaling" {
   target_group_arns   = module.blog_alb.target_group_arns
 
   security_groups     = [module.blog_secgrp.security_group_id]
-  image_id                 = data.aws_ami.app_ami.id
+  image_id            = data.aws_ami.app_ami.id
   instance_type       = var.instance_type
 }
 
