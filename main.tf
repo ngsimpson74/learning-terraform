@@ -3,7 +3,7 @@ data "aws_vpc" "default" {
 }
 
 resource "aws_instance" "blog" {
-  ami             = data.aws_ami.app_ami.id
+  ami             = data.aws_ami.ami_filter.id
   instance_type   = var.instance_type
 
   vpc_security_group_ids = [aws_security_group.blog_secgrp.id]
@@ -39,7 +39,7 @@ module "autoscaling" {
   target_group_arns   = module.blog_alb.target_group_arns
 
   security_groups     = [module.blog_secgrp.security_group_id]
-  image_id            = data.aws_ami.app.ami.id
+  image_id            = data.aws_ami.ami_filter.id
   instance_type       = var.instance_type
 }
 
