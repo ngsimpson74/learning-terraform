@@ -22,7 +22,7 @@ resource "aws_instance" "blog" {
   ami           = data.aws_ami.app_ami.id
   instance_type = var.instance_type
 
-  vpc_security_group_ids = [module.blog_secgrp.security_group_id]
+  vpc_security_group_ids = [module.blog_secgrp.security_group.id]
 
   tags = {
     Name = "HelloWorld"
@@ -32,7 +32,7 @@ resource "aws_instance" "blog" {
 module "blog_secgrp" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "5.1.2"
-  name    = "blog_new"
+  name    = "blog_secgrp"
   
   vpc_id = data.aws_vpc.default.id
 
