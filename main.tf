@@ -44,7 +44,7 @@ module "autoscaling" {
   target_group_arns   = module.blog_alb.target_group_arns
 
   security_groups     = [module.blog_secgrp.security_group_id]
-  ami                 = data.aws_ami.app_ami.id
+  image_id                 = data.aws_ami.app_ami.id
   instance_type       = var.instance_type
 }
 
@@ -59,9 +59,7 @@ module "blog_alb" {
   vpc_id             = module.blog_vpc.vpc_id
   subnets            = module.blog_vpc.public_subnets
   security_groups    = [module.blog_secgrp.security_group_id]
-  image_id           = data.aws_ami.app_ami.id
-  instance_type      = var.instance_type
-
+ 
   access_logs = {
     bucket = "my-alb-logs"
   }
