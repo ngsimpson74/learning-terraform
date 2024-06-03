@@ -33,31 +33,34 @@ module "blog_vpc" {
     Environment = "dev"
   }
 }
+module "autoscaling" {
+  source    = "HDE/autoscaling/aws"
+  version   = "6.4.0"
+  name      = "blog"
+  min_size  = 1
+  max_size  = 2
 
-resource "aws_instance" "blog" {
-  ami           = data.aws_ami.app_ami.id
-  instance_type = var.instance_type
+  vpc_zone_identifier = module.blog_vpc.public_subnets
+  target_group_arns   = module.blog_alb.target_group_arns
 
-  vpc_security_group_ids = [module.blog_secgrp.security_group_id]
-
-  subnet_id = module.blog_vpc.public_subnets[0]
-  
-    tags = {
-    Name = "HelloWorld"
-  }
+  security_groups     = [module.blog_secgrp.security_group_id]
+  ami                 = data.aws_ami.app_ami.id
+  instance_type       = var.instance_type
 }
 
 module "blog_alb" {
-  source  = "terraform-aws-modules/alb/aws"
-  version = "~> 6.0"
+  source    = "terraform-aws-modules/alb/aws"
+  version   = "~> 6.0"
 
-  name = "my-alb"
+  name      = "my-alb"
 
   load_balancer_type = "application"
 
   vpc_id             = module.blog_vpc.vpc_id
   subnets            = module.blog_vpc.public_subnets
   security_groups    = [module.blog_secgrp.security_group_id]
+  image_id           = data.aws_ami.app_ami.id
+  instance_type      = var.instance_type
 
   access_logs = {
     bucket = "my-alb-logs"
