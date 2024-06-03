@@ -3,7 +3,7 @@ data "aws_vpc" "default" {
 }
 
 resource "aws_instance" "blog" {
-  ami             = data.aws_ami.blog.id
+  ami             = data.aws_ami.app_ami.id
   instance_type   = var.instance_type
 
   vpc_security_group_ids = [aws_security_group.blog_secgrp.id]
@@ -12,6 +12,7 @@ resource "aws_instance" "blog" {
     Name = "Learning Terraform"
   }
 }
+
 module "blog_vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
@@ -23,7 +24,7 @@ module "blog_vpc" {
 
     tags = {
     Terraform = "true"
-    Environment = "var.environment.name"
+    environment = "var.environment.name"
   }
 }
 
@@ -38,7 +39,7 @@ module "autoscaling" {
   target_group_arns   = module.blog_alb.target_group_arns
 
   security_groups     = [module.blog_secgrp.security_group_id]
-  image_id            = data.aws_ami.blog.id
+  image_id            = data.aws_ami.app.ami.id
   instance_type       = var.instance_type
 }
 
@@ -84,10 +85,10 @@ module "blog_secgrp" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "5.1.2"
   
-  vpc_id = module.blog_vpc.vpc_id
+  vpc_id  = module.blog_vpc.vpc_id
   name    = "${var.environment.name}-blog"
   
-    ingress_rules       = ["http-80-tcp", "https-443-tcp"]
+  ingress_rules       = ["http-80-tcp", "https-443-tcp"]
   ingress_cidr_blocks = ["0.0.0.0/0"]
   
   egress_rules        = ["all-all"]
